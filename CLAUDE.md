@@ -4,14 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository shape
 
-This repository contains **only two files**:
+This is a self-contained Vite + React 19 app. Tracked files:
 
-- `imarah.jsx` — a single ~2500-line React component (`export default function MasjidManager`) that implements the entire IMARAH mosque management app.
+- `imarah.jsx` — a single ~2500-line React component (`export default function MasjidManager`) that implements the entire IMARAH mosque management app. Lives at the repo root, not under `src/`.
+- `src/main.jsx` — Vite entry. Imports `MasjidManager` from `../imarah.jsx` and mounts it into `#root` inside `<StrictMode>`. The only file inside `src/`.
+- `index.html` — Vite HTML entry. Loads DM Sans + Playfair Display from Google Fonts and sets base body styles inline; there is no separate CSS file.
+- `vite.config.js` — `base: '/'` because the site is served from the custom subdomain `https://imarah.mshadianto.id/`. Do not change this unless the user moves the site back to a path-prefixed host.
+- `public/CNAME` — contains `imarah.mshadianto.id`; Vite copies it verbatim into `dist/`, which is what tells GitHub Pages to serve the site under that custom domain.
+- `package.json` / `package-lock.json` — React 19, Vite 6, `@vitejs/plugin-react`. Scripts: `dev`, `build`, `preview`.
+- `.github/workflows/deploy.yml` — builds with `npm ci && npm run build` and deploys `./dist` to GitHub Pages on every push to `main` (also `workflow_dispatch`). The Pages site is enabled with `build_type: workflow`.
 - `README.md` — product/marketing documentation in Indonesian.
 
-There is **no `package.json`, no Vite config, no `index.html`, no `src/` tree, and no lockfile** in this repo. The README describes a Vite + React 19 setup and `npm run dev`, but that scaffolding does not exist here — `imarah.jsx` is meant to be dropped into a host Vite + React 19 project as the app's root component. If the user asks to "run" or "build" the project, clarify this: either (a) scaffold a Vite + React 19 project and wire `imarah.jsx` in as the default export used by `main.jsx`, or (b) work against an existing host project they point you at. Do not fabricate build commands.
+Build commands that actually work: `npm install`, `npm run dev`, `npm run build`, `npm run preview`. Live site: https://imarah.mshadianto.id/.
 
-Also note: the README refers to the file as `masjid-manager.jsx`, but the actual filename is `imarah.jsx`. Treat the filename on disk as authoritative.
+Note: the README refers to the file as `masjid-manager.jsx`, but the actual filename is `imarah.jsx`. Treat the filename on disk as authoritative.
 
 ## Architecture of `imarah.jsx`
 
@@ -35,5 +41,6 @@ The file is deliberately monolithic — all data, components, state, and page re
 ## Working with this repo
 
 - Prefer editing `imarah.jsx` in place. Do **not** split it into multiple files unless the user explicitly requests that refactor — the single-file layout is intentional and the README documents it.
-- There is nothing to lint, test, or build from inside this directory. If the user asks you to verify a change compiles, tell them the repo has no build setup and ask where the host project lives.
+- To verify a change compiles, run `npm run build`. For interactive testing, run `npm run dev` and open the Vite dev server URL. There is no lint or test setup — don't fabricate one.
+- Pushing to `main` triggers `.github/workflows/deploy.yml`, which rebuilds and republishes the Pages site. Check `gh run list` for status if a deploy seems stuck.
 - The README contains product context (module descriptions, Jogokariyan inspiration, roadmap) that is useful when deciding how a new feature should behave — consult it before inventing semantics for modules like *Peta Dakwah*, *Infaq Nol Rupiah*, or *Jamaah weekly impressions*.
