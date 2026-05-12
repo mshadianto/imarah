@@ -3,7 +3,7 @@
 // ═════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { Btn, Card, Input, KlasifikasiPill, Select, ak, showToast } from "./ui.jsx";
+import { Btn, Card, Input, KlasifikasiPill, Select, ak, showConfirm, showToast } from "./ui.jsx";
 
 const { P, FONT } = ak;
 
@@ -26,13 +26,14 @@ export default function BaganAkun({ state, addKategori, deleteKategori }) {
     }
   };
 
-  const handleDelete = (tipe, id) => {
-    if (
-      !window.confirm(
-        'Hapus kategori ini? Transaksi yang sudah ada tidak akan terhapus tapi tampilan kategorinya jadi "—".'
-      )
-    )
-      return;
+  const handleDelete = async (tipe, id) => {
+    const ok = await showConfirm({
+      title: "Hapus kategori?",
+      message:
+        'Transaksi yang sudah ada tidak akan terhapus, tapi tampilan kategorinya akan jadi "—".',
+      confirmLabel: "Hapus kategori",
+    });
+    if (!ok) return;
     deleteKategori(tipe, id);
     showToast("Kategori dihapus");
   };

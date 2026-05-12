@@ -3,7 +3,7 @@
 // ═════════════════════════════════════════════════════════════════════
 
 import { useRef } from "react";
-import { Btn, Card, ak, showToast } from "./ui.jsx";
+import { Btn, Card, ak, showConfirm, showToast } from "./ui.jsx";
 import { exportCSV, exportJSON, importJSONFile } from "./exports.js";
 import { buildDemoTransaksi } from "./demoData.js";
 
@@ -18,25 +18,48 @@ export default function DataBackup({ state, replace, resetTrx, appendTrx }) {
       showToast("Pilih file terlebih dahulu");
       return;
     }
+    let data;
     try {
-      const data = await importJSONFile(file);
-      if (!window.confirm("Pulihkan data dari file ini? Data saat ini akan ditimpa.")) return;
-      replace({ ...state, ...data });
-      showToast("Data dipulihkan");
+      data = await importJSONFile(file);
     } catch (e) {
-      window.alert("Gagal: " + e.message);
+      showToast({ message: "Gagal membaca file: " + e.message, duration: 5000 });
+      return;
     }
+    const ok = await showConfirm({
+      title: "Pulihkan dari backup?",
+      message:
+        "Seluruh transaksi, kategori, dan profil saat ini akan diganti dengan isi file backup.",
+      confirmLabel: "Pulihkan",
+      confirmVariant: "primary",
+    });
+    if (!ok) return;
+    replace(data);
+    showToast("Data dipulihkan");
   };
 
-  const onReset = () => {
-    if (!window.confirm("Hapus SEMUA data transaksi? Tindakan ini tidak dapat dibatalkan.")) return;
-    if (!window.confirm("Konfirmasi sekali lagi — hapus semua data?")) return;
+  const onReset = async () => {
+    const ok = await showConfirm({
+      title: "Hapus semua transaksi?",
+      message:
+        "Seluruh data transaksi akan dihapus permanen. Profil masjid dan bagan akun tetap aman. Tindakan ini tidak dapat dibatalkan — backup dulu lewat 'Unduh Backup JSON' jika perlu.",
+      confirmLabel: "Hapus semua",
+    });
+    if (!ok) return;
     resetTrx();
     showToast("Data transaksi dihapus");
   };
 
-  const onDemo = () => {
-    if (state.transaksi.length && !window.confirm("Sudah ada data. Tambahkan data demo?")) return;
+  const onDemo = async () => {
+    if (state.transaksi.length) {
+      const ok = await showConfirm({
+        title: "Tambahkan data demo?",
+        message:
+          "Anda sudah punya transaksi. Data demo akan menambah ~240 transaksi baru ke dataset Anda (tidak menggantikan).",
+        confirmLabel: "Tambahkan demo",
+        confirmVariant: "primary",
+      });
+      if (!ok) return;
+    }
     const demo = buildDemoTransaksi();
     appendTrx(demo);
     showToast(demo.length + " transaksi demo ditambahkan");

@@ -1,5 +1,50 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import Akuntansi from "./src/components/Akuntansi/index.jsx";
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react";
+
+// Lazy-loaded so chart.js + the entire Akuntansi module don't bloat the main
+// bundle for users who only visit Dashboard / Keuangan / Donatur / etc.
+const Akuntansi = lazy(() => import("./src/components/Akuntansi/index.jsx"));
+
+function AkuntansiFallback() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f7f6f2",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        color: "#5b6b62",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "3px solid #d9d6c8",
+            borderTopColor: "#155741",
+            margin: "0 auto 16px",
+            animation: "akSpin 0.9s linear infinite",
+          }}
+        />
+        <div
+          style={{
+            fontFamily: "'Fraunces', Georgia, serif",
+            fontSize: 18,
+            color: "#155741",
+            marginBottom: 4,
+          }}
+        >
+          Memuat Akuntansi…
+        </div>
+        <div style={{ fontSize: 12, color: "#5b6b62" }}>Menyiapkan laporan keuangan ISAK 35</div>
+      </div>
+      <style>{`@keyframes akSpin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
 
 // ─── Constants & Data ────────────────────────────────────────────────
 const MONTHS = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
@@ -2203,7 +2248,21 @@ export default function MasjidManager() {
     );
   };
 
-  const pages = { dashboard: renderDashboard, finance: renderFinance, akuntansi: () => <Akuntansi />, usaha: renderUsaha, events: renderEvents, inventory: renderInventory, donatur: renderDonatur, dakwah: renderDakwah, jamaah: renderJamaah };
+  const pages = {
+    dashboard: renderDashboard,
+    finance: renderFinance,
+    akuntansi: () => (
+      <Suspense fallback={<AkuntansiFallback />}>
+        <Akuntansi />
+      </Suspense>
+    ),
+    usaha: renderUsaha,
+    events: renderEvents,
+    inventory: renderInventory,
+    donatur: renderDonatur,
+    dakwah: renderDakwah,
+    jamaah: renderJamaah,
+  };
 
   return (
     <div style={{

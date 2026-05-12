@@ -28,7 +28,7 @@
 
 <br>
 
-[🚀 Live Demo](#-live-demo) · [📦 Instalasi](#-quick-start) · [🗂️ Fitur](#-8-modul-lengkap) · [🤝 Kontribusi](#-kontribusi)
+[🚀 Live Demo](#-live-demo) · [📦 Instalasi](#-quick-start) · [🗂️ Fitur](#-9-modul-lengkap) · [🤝 Kontribusi](#-kontribusi)
 
 <br>
 
@@ -50,6 +50,7 @@ Kebanyakan masjid di Indonesia masih mengelola keuangan dan operasional secara m
 │                                                             │
 │   📊 Dashboard    →  Ringkasan lengkap satu layar          │
 │   💰 Keuangan     →  Pemasukan, pengeluaran, perbandingan  │
+│   📒 Akuntansi    →  ISAK 35 — laporan keuangan formal     │
 │   🏪 Usaha Masjid →  Unit usaha sektor riil & laba rugi    │
 │   📅 Kegiatan     →  Jadwal kajian, TPA, rapat DKM         │
 │   🔧 Sarpras      →  Inventaris, laporan rusak, jadwal     │
@@ -62,7 +63,7 @@ Kebanyakan masjid di Indonesia masih mengelola keuangan dan operasional secara m
 
 ---
 
-## 🕌 8 Modul Lengkap
+## 🕌 9 Modul Lengkap
 
 ### 1. 📊 Dashboard
 Ringkasan seluruh aktivitas masjid dalam satu layar — total pemasukan/pengeluaran bulan berjalan, saldo kas, jumlah donatur rutin, laba usaha masjid, donut chart komposisi keuangan, kegiatan mendatang, dan transaksi terakhir.
@@ -75,7 +76,31 @@ Pencatatan keuangan lengkap dengan fitur:
 - **Filter kategori spesifik** — lihat hanya "Pengeluaran Pemeliharaan" misalnya
 - Status verifikasi per transaksi
 
-### 3. 🏪 Usaha Masjid *(Sektor Riil)*
+### 3. 📒 Akuntansi *(ISAK 35)*
+Sistem akuntansi formal untuk masjid berbasis **ISAK 35 — Penyajian Laporan Keuangan Entitas Berorientasi Non-Laba** (interpretasi PSAK 1). Dirancang siap audit & transparan ke jamaah:
+
+- **3 klasifikasi aset neto** otomatis sesuai ISAK 35
+  - 🟢 *Tanpa Pembatasan* — infaq, shadaqah, operasional
+  - 🟡 *Terikat Temporer* — zakat, donasi pembangunan, santunan yatim
+  - ⚫ *Terikat Permanen* — wakaf uang & aset wakaf
+- **4 laporan keuangan formal**
+  1. Laporan Posisi Keuangan (Neraca)
+  2. Laporan Penghasilan Komprehensif (Laba Rugi)
+  3. Laporan Arus Kas — metode langsung (Operasi · Investasi · Pendanaan)
+  4. Catatan atas Laporan Keuangan (CALK)
+- **Buku Kas** — jurnal harian dengan saldo berjalan, sort asc/desc, filter periode, total Σ Masuk/Keluar/Net, search uraian
+- **Bagan Akun** (Chart of Accounts) — 12 akun penerimaan + 16 akun beban pre-loaded, dapat diubah
+- **Quick add** — tombol brass di top bar untuk catat transaksi dari halaman manapun
+- **Undo on delete** — toast dengan tombol "Urungkan" 6 detik setelah hapus, tidak ada lagi popup `confirm` browser
+- **Filter periode** — Bulan ini / Bulan lalu / YTD / Seluruh data / Per tahun
+- **Profil Masjid** — muncul di kop semua laporan
+- **Export CSV** transaksi (Excel-friendly, BOM UTF-8) & **Backup JSON** penuh + Import
+- **Print-ready** — Ctrl+P di tiap laporan langsung jadi PDF rapi untuk rapat DKM
+- **Data lokal** — `localStorage` key `imarah_akuntansi_v1` (siap diganti ke backend kapan saja)
+
+> Cocok untuk dipakai bendahara langsung — atau sebagai *single source of truth* yang nanti dipindah ke backend multi-user via Cloudflare D1.
+
+### 4. 🏪 Usaha Masjid *(Sektor Riil)*
 Modul untuk masjid yang ingin mandiri secara finansial:
 - **8 unit usaha** — Aula Serbaguna, Minimarket, Katering, Koperasi Syariah, Parkir, Lapak PKL, Layanan Jenazah, Laundry
 - **Laba Rugi per kategori** — Sewa, Retail, Jasa, Koperasi, Parkir
@@ -83,7 +108,7 @@ Modul untuk masjid yang ingin mandiri secara finansial:
 - **Booking & Sewa** — manajemen reservasi aula dan pesanan katering, konfirmasi/tolak
 - **Riwayat transaksi** per unit usaha
 
-### 4. 📅 Kegiatan
+### 5. 📅 Kegiatan
 Jadwal kegiatan masjid dengan 5 kategori berkode warna:
 - 🟣 Kajian — pengajian rutin, majelis taklim
 - 🟢 Sholat — Jumat, Hari Raya
@@ -91,13 +116,13 @@ Jadwal kegiatan masjid dengan 5 kategori berkode warna:
 - 🟡 Organisasi — rapat DKM
 - 🔴 Operasional — bersih-bersih, maintenance
 
-### 5. 🔧 Sarana & Prasarana
+### 6. 🔧 Sarana & Prasarana
 Pengelolaan aset masjid dengan 3 sub-modul:
 - **📦 Inventaris** — daftar aset per area (Ruang Utama, Wudhu, Serambi, dll) + filter lokasi
 - **🛠️ Laporan Kerusakan** — sistem tiket: siapapun bisa lapor, prioritas 🔴🟡🔵, status Baru → Proses → Selesai
 - **📅 Jadwal Perawatan** — countdown otomatis: berapa hari lagi AC, genset, pompa, CCTV perlu di-service
 
-### 6. 💚 Donatur
+### 7. 💚 Donatur
 Manajemen donatur lengkap:
 - **5 jenis** — 🔄 Rutin, 🎁 Insidentil, 🌙 Ramadhan, 🐑 Qurban, 🏛️ Wakaf
 - **Follow-up otomatis** — alert donatur rutin yang belum berdonasi > 35 hari
@@ -105,7 +130,7 @@ Manajemen donatur lengkap:
 - **Breakdown visual** per jenis donasi
 - Filter & pencarian by nama/HP
 
-### 7. 🗺️ Dakwah & Sosial *(Adopsi Masjid Jogokariyan)*
+### 8. 🗺️ Dakwah & Sosial *(Adopsi Masjid Jogokariyan)*
 Modul paling unik — mengadopsi 4 pilar manajemen Masjid Jogokariyan:
 
 #### 🗺️ Peta Dakwah
@@ -131,7 +156,7 @@ Filosofi revolusioner: *"Infaq itu ditunggu pahalanya, bukan disimpan di rekenin
 | 🌙 Buka Bersama | 1000+ porsi/hari | Ramadhan |
 | 🚗 Jemput Jamaah | 8 orang | Antar-jemput lansia & disabilitas |
 
-### 8. 👥 Jamaah
+### 9. 👥 Jamaah
 Tracking kehadiran yang **realistis** — bukan input per waktu sholat (bikin repot marbot), tapi **kesan mingguan** oleh pengurus:
 - Cukup pilih 🟢 Ramai / 🟡 Normal / 🔴 Sepi
 - Opsional: catatan singkat ("Ramadhan", "hujan terus")
@@ -159,12 +184,15 @@ Buka `http://localhost:5173` — selesai.
 ### Tech Stack
 
 ```
-Frontend    →  React 19 + Vite
+Frontend    →  React 19 + Vite 6
 Styling     →  CSS-in-JS (inline styles + CSS variables)
-Font        →  Playfair Display + DM Sans (Google Fonts)
-State       →  React useState + useMemo
-Build       →  Vite (SPA)
-Deploy      →  Cloudflare Pages / Vercel / Netlify
+Fonts       →  Playfair Display + DM Sans (main)
+              Fraunces + Plus Jakarta Sans + JetBrains Mono (Akuntansi)
+Charts      →  Chart.js 4 + react-chartjs-2 (lazy-loaded dgn Akuntansi)
+State       →  useState + useReducer + useMemo
+Persistence →  localStorage (key: imarah_akuntansi_v1 untuk modul Akuntansi)
+Build       →  Vite (SPA, code-split per route)
+Deploy      →  GitHub Pages → imarah.mshadianto.id (CNAME, auto via Actions)
 ```
 
 ---
@@ -172,51 +200,48 @@ Deploy      →  Cloudflare Pages / Vercel / Netlify
 ## 📐 Arsitektur
 
 ```
-masjid-manager.jsx          ← Single-file React app (2500+ lines)
+imarah.jsx                   ← Main app, single-file (~2500 lines)
 │
-├── Constants & Data         ← Initial data untuk semua modul
-│   ├── Finance (3 bulan)
-│   ├── Events, Inventory, Tickets
-│   ├── Donatur, Usaha Units, Bookings
-│   ├── Peta Dakwah, Program Sosial
-│   └── Infaq Nol Rupiah, Jamaah
+├── Constants & Data         ← Initial data untuk 8 modul utama
+├── UI Components            ← Icon (14 SVG), StatCard, DonutChart, Modal, Field, Btn
+├── 9 Page Renderers         ← 8 inline + Akuntansi (lazy-loaded)
+└── 7 Modal Forms            ← Transaksi, Event, Inventaris, Ticket, Donatur, Booking, Jamaah
+
+src/components/Akuntansi/    ← Modul ISAK 35, code-split chunk
 │
-├── UI Components
-│   ├── Icon (13 SVG icons)
-│   ├── StatCard, DonutChart, MiniBarChart
-│   ├── Modal, Field, Btn
-│   └── Responsive sidebar + mobile nav
+├── index.jsx                ← Container — sub-sidebar + topbar + sub-routing
+├── useAkuntansiStore.js     ← useReducer hook + localStorage sync + safe quota
+├── constants.js             ← DEFAULT_STATE, palet jade/brass, NAV_GROUPS
+├── helpers.js               ← fmtRp, fmtDate, period bounds, aggregateBuckets
+├── ui.jsx                   ← Card, Btn, Input, Modal, Pill, Toast, Confirm
+├── exports.js               ← CSV / JSON export + import
+├── demoData.js              ← ~240 transaksi demo realistic 6 bulan
 │
-├── 8 Page Renderers
-│   ├── renderDashboard
-│   ├── renderFinance      (filter, comparison, category breakdown)
-│   ├── renderUsaha        (P&L, units, booking, transactions)
-│   ├── renderEvents
-│   ├── renderInventory    (inventory, tickets, maintenance)
-│   ├── renderDonatur      (types, follow-up, top donors)
-│   ├── renderDakwah       (peta, infaq nol, program sosial)
-│   └── renderJamaah      (weekly impressions)
-│
-└── 7 Modal Forms
-    ├── Tambah Transaksi
-    ├── Tambah Kegiatan
-    ├── Tambah Inventaris
-    ├── Laporkan Kerusakan
-    ├── Tambah Donatur
-    ├── Booking / Sewa Baru
-    └── Catat Kesan Jamaah
+├── Dashboard.jsx            ← Hero + 4 KPI + Bar 6-bln + Doughnut + Recent
+├── Transaksi.jsx            ← Form input penuh dengan auto-format ribuan
+├── TransaksiModal.jsx       ← Quick add/edit dari top bar
+├── BukuKas.jsx              ← Jurnal harian, sort, totals, sticky header, undo
+├── LaporanShared.jsx        ← Header, Row, GroupRow, PrintBar, Signatures
+├── LaporanPosisi.jsx        ← Neraca (Aset, Liabilitas, Aset Neto)
+├── LaporanAktivitas.jsx     ← Penghasilan Komprehensif
+├── LaporanArusKas.jsx       ← Arus Kas metode langsung
+├── Catatan.jsx              ← CALK collapsible (5 catatan baku)
+├── BaganAkun.jsx            ← CRUD chart of accounts
+├── Profil.jsx               ← Profil masjid untuk kop laporan
+└── DataBackup.jsx           ← Export/Import/Reset/Demo
 ```
 
 ---
 
 ## 🗺️ Roadmap
 
+- [x] **Sistem Akuntansi ISAK 35** — Laporan keuangan formal untuk audit & transparansi ✓
 - [ ] **Backend Integration** — Cloudflare Workers + D1 database
-- [ ] **Multi-tenant** — Satu platform untuk banyak masjid
+- [ ] **Multi-tenant** — Satu platform untuk banyak masjid (per-masjid namespace)
 - [ ] **WhatsApp Notification** — Reminder donatur, jadwal kegiatan, laporan kerusakan
-- [ ] **Laporan PDF** — Export laporan keuangan & dakwah untuk rapat DKM
-- [ ] **QR Code Infaq** — QRIS integration untuk infaq digital
-- [ ] **PWA** — Installable di HP marbot & pengurus
+- [ ] **Laporan PDF generator** — Server-side PDF biar tidak bergantung print browser
+- [ ] **QR Code Infaq** — QRIS integration untuk infaq digital, auto-catat ke modul Akuntansi
+- [ ] **PWA** — Installable di HP marbot & pengurus, mode offline
 - [ ] **Role-based Access** — Ketua DKM, Bendahara, Marbot, Jamaah
 - [ ] **AI Assistant** — Chatbot untuk jamaah (jadwal sholat, info kegiatan)
 

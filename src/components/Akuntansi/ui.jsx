@@ -312,24 +312,41 @@ export function AkModal({ open, onClose, title, eyebrow, children, width = 560 }
 }
 
 // ── Toast (lightweight, self-contained) ───────────────────────────────
+// showToast("string") — simple notification, 2.2s
+// showToast({ message, action: { label, onClick }, duration }) — w/ action button, 6s default
 let toastCounter = 0;
 const toastSubscribers = new Set();
 
-export function showToast(message) {
-  const item = { id: ++toastCounter, message };
+export function showToast(input) {
+  const cfg =
+    typeof input === "string"
+      ? { message: input, duration: 2200 }
+      : { duration: input?.action ? 6000 : 2200, ...input };
+  const item = { id: ++toastCounter, ...cfg };
   toastSubscribers.forEach((cb) => cb(item));
 }
 
 export function ToastHost() {
   const [items, setItems] = useState([]);
+
   useEffect(() => {
     const cb = (item) => {
       setItems((prev) => [...prev, item]);
-      setTimeout(() => setItems((prev) => prev.filter((i) => i.id !== item.id)), 2200);
+      const timer = setTimeout(
+        () => setItems((prev) => prev.filter((i) => i.id !== item.id)),
+        item.duration || 2200
+      );
+      item._timer = timer;
     };
     toastSubscribers.add(cb);
     return () => toastSubscribers.delete(cb);
   }, []);
+
+  const dismiss = (item) => {
+    clearTimeout(item._timer);
+    setItems((prev) => prev.filter((i) => i.id !== item.id));
+  };
+
   return (
     <div
       style={{
@@ -347,24 +364,121 @@ export function ToastHost() {
         <div
           key={i.id}
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
             background: P.jade900,
             color: "#fff",
-            padding: "10px 18px",
+            padding: "10px 14px 10px 18px",
             borderRadius: 6,
             fontSize: 13,
             fontFamily: FONT.body,
             boxShadow: "0 12px 32px rgba(10,51,38,0.35)",
             pointerEvents: "auto",
             animation: "akFadeIn 0.25s ease",
+            maxWidth: 420,
           }}
         >
-          {i.message}
+          <span style={{ flex: 1 }}>{i.message}</span>
+          {i.action ? (
+            <button
+              onClick={() => {
+                try {
+                  i.action.onClick();
+                } finally {
+                  dismiss(i);
+                }
+              }}
+              style={{
+                background: "transparent",
+                border: `1px solid ${P.brass400}`,
+                color: P.brass400,
+                padding: "5px 11px",
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 600,
+                fontFamily: FONT.body,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {i.action.label}
+            </button>
+          ) : null}
         </div>
       ))}
       <style>{`
         @keyframes akFadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
       `}</style>
     </div>
+  );
+}
+
+// ── Confirm dialog (Promise-based, replaces window.confirm) ───────────
+// await showConfirm({ title, message, confirmLabel, confirmVariant, cancelLabel })
+// resolves true if user confirms, false if cancels / closes.
+let confirmCounter = 0;
+const confirmSubscribers = new Set();
+
+export function showConfirm(opts = {}) {
+  return new Promise((resolve) => {
+    const item = {
+      id: ++confirmCounter,
+      title: opts.title || "Konfirmasi",
+      message: opts.message || "",
+      confirmLabel: opts.confirmLabel || "Hapus",
+      confirmVariant: opts.confirmVariant || "danger",
+      cancelLabel: opts.cancelLabel || "Batal",
+      resolve,
+    };
+    confirmSubscribers.forEach((cb) => cb(item));
+  });
+}
+
+export function ConfirmHost() {
+  const [item, setItem] = useState(null);
+
+  useEffect(() => {
+    const cb = (next) => setItem(next);
+    confirmSubscribers.add(cb);
+    return () => confirmSubscribers.delete(cb);
+  }, []);
+
+  const close = (result) => {
+    if (item) item.resolve(result);
+    setItem(null);
+  };
+
+  return (
+    <AkModal
+      open={!!item}
+      onClose={() => close(false)}
+      title={item?.title || "Konfirmasi"}
+      width={420}
+    >
+      {item ? (
+        <>
+          <p
+            style={{
+              margin: "0 0 18px",
+              fontSize: 14,
+              lineHeight: 1.6,
+              color: "rgba(28,38,32,0.78)",
+            }}
+          >
+            {item.message}
+          </p>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+            <Btn variant="ghost" onClick={() => close(false)}>
+              {item.cancelLabel}
+            </Btn>
+            <Btn variant={item.confirmVariant} onClick={() => close(true)}>
+              {item.confirmLabel}
+            </Btn>
+          </div>
+        </>
+      ) : null}
+    </AkModal>
   );
 }
 

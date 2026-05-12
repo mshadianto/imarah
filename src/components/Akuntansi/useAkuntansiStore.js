@@ -7,28 +7,44 @@
 import { useReducer, useEffect, useCallback, useRef } from "react";
 import { STORAGE_KEY, DEFAULT_STATE } from "./constants.js";
 import { uid, getKategori } from "./helpers.js";
+import { showToast } from "./ui.jsx";
 
 function hydrate() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_STATE;
-    const parsed = JSON.parse(raw);
-    // Shallow-merge so newly added defaults (e.g. new kategori columns) still apply
-    // when the user's stored blob predates them, but stored arrays take precedence.
-    return {
-      ...DEFAULT_STATE,
-      ...parsed,
-      profil: { ...DEFAULT_STATE.profil, ...(parsed.profil || {}) },
-    };
+    return mergeIntoDefault(JSON.parse(raw));
   } catch {
     return DEFAULT_STATE;
   }
 }
 
+// Merge an arbitrary (possibly incomplete) payload into a complete state shape.
+// Used by REPLACE / hydrate so an older or partial backup file never strips out
+// fields the rest of the UI relies on.
+function mergeIntoDefault(payload) {
+  if (!payload || typeof payload !== "object") return DEFAULT_STATE;
+  return {
+    ...DEFAULT_STATE,
+    ...payload,
+    profil: { ...DEFAULT_STATE.profil, ...(payload.profil || {}) },
+    kategoriIn:
+      Array.isArray(payload.kategoriIn) && payload.kategoriIn.length
+        ? payload.kategoriIn
+        : DEFAULT_STATE.kategoriIn,
+    kategoriOut:
+      Array.isArray(payload.kategoriOut) && payload.kategoriOut.length
+        ? payload.kategoriOut
+        : DEFAULT_STATE.kategoriOut,
+    transaksi: Array.isArray(payload.transaksi) ? payload.transaksi : [],
+    selectedPeriode: payload.selectedPeriode || DEFAULT_STATE.selectedPeriode,
+  };
+}
+
 function reducer(state, action) {
   switch (action.type) {
     case "REPLACE":
-      return action.state;
+      return mergeIntoDefault(action.state);
 
     case "SET_PERIODE":
       return { ...state, selectedPeriode: action.periode };
@@ -98,6 +114,7 @@ function reducer(state, action) {
 export function useAkuntansiStore() {
   const [state, dispatch] = useReducer(reducer, undefined, hydrate);
   const isFirstRun = useRef(true);
+  const quotaWarned = useRef(false);
 
   // Persist on every state change (skip the first synchronous run; hydrate already
   // loaded from storage so the initial write would just rewrite the same blob).
@@ -109,7 +126,16 @@ export function useAkuntansiStore() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
+      // QuotaExceededError, SecurityError (private mode), etc.
       console.warn("Akuntansi: gagal menyimpan ke localStorage", e);
+      if (!quotaWarned.current) {
+        quotaWarned.current = true;
+        showToast({
+          message:
+            "Gagal menyimpan ke browser — penyimpanan penuh atau dibatasi. Unduh Backup JSON untuk amankan data.",
+          duration: 8000,
+        });
+      }
     }
   }, [state]);
 

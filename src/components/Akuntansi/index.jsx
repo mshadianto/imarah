@@ -17,7 +17,7 @@ import {
   fmtRp,
   getPeriodeBounds,
 } from "./helpers.js";
-import { Btn, Select, ToastHost, ak } from "./ui.jsx";
+import { Btn, ConfirmHost, Select, ToastHost, ak } from "./ui.jsx";
 
 import Dashboard from "./Dashboard.jsx";
 import Transaksi from "./Transaksi.jsx";
@@ -77,6 +77,7 @@ export default function Akuntansi() {
             state={state}
             onEdit={(id) => openQuickAdd(id)}
             deleteTrx={store.deleteTrx}
+            addTrx={store.addTrx}
           />
         );
       case "lap-posisi":
@@ -351,6 +352,7 @@ export default function Akuntansi() {
         updateTrx={store.updateTrx}
         editingId={modalEditId}
       />
+      <ConfirmHost />
       <ToastHost />
 
       {/* Print + responsive helpers */}

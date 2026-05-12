@@ -5,7 +5,7 @@
 import { useMemo } from "react";
 import { Card, ak } from "./ui.jsx";
 import { fmtRp, fmtRpPlain, getKategori, getPeriodeBounds, trxInPeriode } from "./helpers.js";
-import { Header, ReportTable, Row, GroupRow, PrintBar, Signatures } from "./LaporanPosisi.jsx";
+import { Header, ReportTable, Row, GroupRow, PrintBar, Signatures } from "./LaporanShared.jsx";
 
 const { P, FONT } = ak;
 

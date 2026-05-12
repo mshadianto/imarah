@@ -5,7 +5,7 @@
 import { useMemo } from "react";
 import { Card, ak } from "./ui.jsx";
 import { fmtRp, fmtRpPlain, getKategori, getPeriodeBounds, trxInPeriode } from "./helpers.js";
-import { Header, ReportTable, Row, PrintBar, Signatures } from "./LaporanPosisi.jsx";
+import { Header, ReportTable, Row, PrintBar, Signatures, SectionHead } from "./LaporanShared.jsx";
 
 const { P, FONT } = ak;
 
@@ -146,24 +146,3 @@ export default function LaporanArusKas({ state }) {
   );
 }
 
-function SectionHead({ title }) {
-  return (
-    <tr>
-      <th
-        colSpan={2}
-        style={{
-          padding: "0 0 8px",
-          fontFamily: FONT.display,
-          fontSize: 16,
-          color: P.ink900,
-          textAlign: "left",
-          textTransform: "none",
-          letterSpacing: 0,
-          borderBottom: "none",
-        }}
-      >
-        {title}
-      </th>
-    </tr>
-  );
-}

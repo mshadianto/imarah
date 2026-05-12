@@ -3,7 +3,7 @@
 // ═════════════════════════════════════════════════════════════════════
 
 import { Card, ak } from "./ui.jsx";
-import { Header, PrintBar } from "./LaporanPosisi.jsx";
+import { Header, PrintBar } from "./LaporanShared.jsx";
 
 const { P, FONT } = ak;
 
