@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import Akuntansi from "./src/components/Akuntansi/index.jsx";
 
 // ─── Constants & Data ────────────────────────────────────────────────
 const MONTHS = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
@@ -254,6 +255,7 @@ const Icon = ({ name, size = 20 }) => {
     refresh: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>,
     shop: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9"/><path d="M9 21V13h6v8"/><path d="M3 9h18"/><path d="M6 9v2a3 3 0 006 0V9"/><path d="M12 9v2a3 3 0 006 0V9"/></svg>,
     map: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>,
+    ledger: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4z"/><path d="M4 4v14a2 2 0 0 0 2 2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>,
   };
   return icons[name] || null;
 };
@@ -606,6 +608,7 @@ export default function MasjidManager() {
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: "dashboard" },
     { id: "finance", label: "Keuangan", icon: "finance" },
+    { id: "akuntansi", label: "Akuntansi (ISAK 35)", icon: "ledger" },
     { id: "usaha", label: "Usaha Masjid", icon: "shop" },
     { id: "events", label: "Kegiatan", icon: "calendar" },
     { id: "inventory", label: "Sarana & Prasarana", icon: "inventory" },
@@ -2200,7 +2203,7 @@ export default function MasjidManager() {
     );
   };
 
-  const pages = { dashboard: renderDashboard, finance: renderFinance, usaha: renderUsaha, events: renderEvents, inventory: renderInventory, donatur: renderDonatur, dakwah: renderDakwah, jamaah: renderJamaah };
+  const pages = { dashboard: renderDashboard, finance: renderFinance, akuntansi: () => <Akuntansi />, usaha: renderUsaha, events: renderEvents, inventory: renderInventory, donatur: renderDonatur, dakwah: renderDakwah, jamaah: renderJamaah };
 
   return (
     <div style={{
@@ -2333,7 +2336,14 @@ export default function MasjidManager() {
       )}
 
       {/* ── Main Content ──────────────────────────────────────── */}
-      <main className="main-content" style={{ marginLeft: 240, padding: "28px 32px", minHeight: "100vh" }}>
+      <main
+        className={page === "akuntansi" ? "main-content akuntansi-flush" : "main-content"}
+        style={{
+          marginLeft: 240,
+          padding: page === "akuntansi" ? 0 : "28px 32px",
+          minHeight: "100vh",
+        }}
+      >
         {pages[page]()}
       </main>
 
@@ -2521,6 +2531,7 @@ export default function MasjidManager() {
           .sidebar-desktop { display: none !important; }
           .mobile-header { display: flex !important; }
           .main-content { margin-left: 0 !important; padding: 72px 16px 24px !important; }
+          .akuntansi-flush { padding: 56px 0 0 !important; }
         }
       `}</style>
     </div>
